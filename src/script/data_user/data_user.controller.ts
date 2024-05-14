@@ -17,6 +17,25 @@ export default class DataUserController {
     }
   }
 
+  public async UpdateData(req: Request, res: Response) {
+    try {
+      const no_hp = req.body.no_hp;
+      const nama = req.body.nama;
+      const result = await dataUser.update({
+        data: {
+          nama: nama,
+        },
+        where: {
+          no_hp: no_hp,
+        },
+      });
+
+      res.json({ data: result, status: 'Success' });
+    } catch (error) {
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
+    }
+  }
+
   public async CreateDataCustomer(req: Request, res: Response) {
     CreateData(req, res, 'CUSTOMER');
   }
@@ -25,7 +44,7 @@ export default class DataUserController {
     CreateData(req, res, 'TOKO');
   }
 
-  public async KirimUlangOTP(req: Request, res: Response) {
+  public async KirimOTP(req: Request, res: Response) {
     try {
       const no_hp = req.body.no_hp;
       const otp = GenRandomOTP();
@@ -44,7 +63,7 @@ export default class DataUserController {
     try {
       const no_hp = req.body.no_hp;
       const otp = req.body.otp;
-      console.log(otp);
+
       if (!otp || !no_hp) throw 'Parameter tidak lengkap';
 
       const result = await dataUser.update({
