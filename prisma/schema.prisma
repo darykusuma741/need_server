@@ -39,6 +39,13 @@ model DataToko {
   data_user   DataUser @relation(fields: [id_user], references: [id], onDelete: Cascade)
 }
 
+model DataKategori {
+  id        Int      @id @default(autoincrement())
+  kategori  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   TOKO // Menambahkan peran "TOKO"
   CUSTOMER // Menambahkan peran "CUSTOMER"
