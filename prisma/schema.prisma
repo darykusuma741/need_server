@@ -30,20 +30,36 @@ model DataUser {
 }
 
 model DataToko {
-  id          Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   nama_toko   String
   alamat_toko String
   id_user     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  data_user   DataUser @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  data_user   DataUser     @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  DataProduk  DataProduk[]
 }
 
 model DataKategori {
-  id        Int      @id @default(autoincrement())
-  kategori  String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int          @id @default(autoincrement())
+  kategori   String       @unique
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  DataProduk DataProduk[]
+}
+
+model DataProduk {
+  id            Int           @id @default(autoincrement())
+  id_toko       Int
+  id_kategori   Int?
+  nama_produk   String
+  deskripsi     String        @db.Text
+  foto          String?
+  harga         Int
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  data_toko     DataToko      @relation(fields: [id_toko], references: [id], onDelete: Cascade)
+  data_kategori DataKategori? @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
 }
 
 enum Role {

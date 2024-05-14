@@ -2,14 +2,14 @@ import express from 'express';
 import DataUserController from './data_user.controller';
 
 const router = express.Router();
-const dataUserCtr = new DataUserController();
+const ctr = new DataUserController();
 
-router.get('/get-data', dataUserCtr.GetData);
-router.post('/create-data-customer', dataUserCtr.CreateDataCustomer);
-router.post('/create-data-toko', dataUserCtr.CreateDataToko);
-router.post('/get-data-by-nohp', dataUserCtr.GetByNoHp);
-router.put('/kirim-ulang-otp', dataUserCtr.KirimOTP);
-router.put('/update-data', dataUserCtr.UpdateData);
-router.put('/cek-otp', dataUserCtr.CekOTP);
+router.get('/get-data', ctr.GetData);
+router.post('/create-data-customer', ctr.CreateDataCustomer);
+router.post('/create-data-toko', ctr.CreateDataToko);
+router.post('/get-data-by-nohp', ctr.GetByNoHp);
+router.put('/kirim-ulang-otp', ctr.KirimOTP);
+router.put('/update-data', ctr.UpdateData);
+router.put('/cek-otp', ctr.CekOTP);
 
 export const DataUserRouter = router;
