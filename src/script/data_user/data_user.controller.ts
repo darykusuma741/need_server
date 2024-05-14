@@ -28,7 +28,7 @@ export default class DataUserController {
   public async KirimUlangOTP(req: Request, res: Response) {
     try {
       const no_hp = req.body.no_hp;
-      const otp = GenRandomOTP(1, 100);
+      const otp = GenRandomOTP();
 
       const result = await dataUser.update({
         data: { otp: otp },
@@ -67,7 +67,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
     const nama = req.body.nama;
     const no_hp = req.body.no_hp;
     const id_ref = role == 'CUSTOMER' ? req.body.id_ref ?? null : null;
-    const otp = GenRandomOTP(1, 100);
+    const otp = GenRandomOTP();
 
     const id = await cariIDKosong();
     const result = await dataUser.create({
@@ -89,7 +89,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
   }
 }
 async function cariIDKosong(): Promise<string> {
-  const nmb = GenRandomID(1, 100);
+  const nmb = GenRandomID();
   const rslt = await dataUser.findFirst({ where: { id: nmb } });
   if (rslt) {
     return cariIDKosong();
