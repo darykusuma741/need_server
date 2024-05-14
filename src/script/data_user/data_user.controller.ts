@@ -10,7 +10,18 @@ const dataUser = prisma.dataUser;
 export default class DataUserController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataUser.findMany();
+      const result = await dataUser.findMany({ include: { DataToko: true } });
+      res.json({ data: result, status: 'Success' });
+    } catch (error) {
+      res.status(500).json({ message: `${error}`, status: 'Error' });
+    }
+  }
+
+  public async GetByNoHp(req: Request, res: Response) {
+    try {
+      const no_hp = req.body.no_hp;
+      const result = await dataUser.findFirst({ where: { no_hp }, include: { DataToko: true } });
+      if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${error}`, status: 'Error' });
@@ -25,6 +36,7 @@ export default class DataUserController {
         data: {
           nama: nama,
         },
+        include: { DataToko: true },
         where: {
           no_hp: no_hp,
         },
@@ -51,6 +63,7 @@ export default class DataUserController {
 
       const result = await dataUser.update({
         data: { otp: otp },
+        include: { DataToko: true },
         where: { no_hp: no_hp },
       });
       res.json({ data: result, status: 'Success' });
@@ -68,6 +81,7 @@ export default class DataUserController {
 
       const result = await dataUser.update({
         data: { active: true },
+        include: { DataToko: true },
         where: {
           no_hp: no_hp,
           otp: otp,
@@ -100,6 +114,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
         saldo: 0,
         nama: nama,
       },
+      include: { DataToko: true },
     });
 
     res.json({ data: result, status: 'Success' });

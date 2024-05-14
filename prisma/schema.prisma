@@ -26,6 +26,17 @@ model DataUser {
   updatedAt DateTime   @updatedAt
   parent    DataUser?  @relation("Children", fields: [id_ref], references: [id], onDelete: SetNull)
   children  DataUser[] @relation("Children")
+  DataToko  DataToko[]
+}
+
+model DataToko {
+  id          Int      @id @default(autoincrement())
+  nama_toko   String
+  alamat_toko String
+  id_user     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  data_user   DataUser @relation(fields: [id_user], references: [id], onDelete: Cascade)
 }
 
 enum Role {
