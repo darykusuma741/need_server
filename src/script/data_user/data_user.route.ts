@@ -5,6 +5,9 @@ const router = express.Router();
 const dataUserCtr = new DataUserController();
 
 router.get('/get-data', dataUserCtr.GetData);
-router.put('/create-data', dataUserCtr.CreateData);
+router.post('/create-data-customer', dataUserCtr.CreateDataCustomer);
+router.post('/create-data-toko', dataUserCtr.CreateDataToko);
+router.put('/kirim-ulang-otp', dataUserCtr.KirimUlangOTP);
+router.put('/cek-otp', dataUserCtr.CekOTP);
 
 export const DataUserRouter = router;

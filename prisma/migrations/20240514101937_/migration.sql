@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "DataUser" ADD COLUMN     "saldo" INTEGER NOT NULL DEFAULT 0;
