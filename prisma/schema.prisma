@@ -54,7 +54,7 @@ model DataProduk {
   id_kategori   Int?
   nama_produk   String
   deskripsi     String        @db.Text
-  foto          String?
+  foto          String
   harga         Int
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

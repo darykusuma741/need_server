@@ -38,7 +38,7 @@ app.use(
     parameterLimit: 50000,
   })
 );
-app.use(express.static('result'));
+app.use(express.static('uploads'));
 app.use('/apiv1', RouterIndex);
 
 server.listen(port, () => {
