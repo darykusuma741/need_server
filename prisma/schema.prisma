@@ -14,57 +14,98 @@ datasource db {
 }
 
 model DataUser {
-  id        String     @id
-  nama      String?
-  role      Role
-  no_hp     String     @unique
-  id_ref    String?
-  otp       String
-  saldo     Int        @default(0)
-  active    Boolean
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  parent    DataUser?  @relation("Children", fields: [id_ref], references: [id], onDelete: SetNull)
-  children  DataUser[] @relation("Children")
-  DataToko  DataToko[]
+  id            String          @id
+  nama          String?
+  role          Role
+  no_hp         String          @unique
+  id_ref        String?
+  otp           String
+  saldo         Int             @default(0)
+  active        Boolean
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  parent        DataUser?       @relation("Children", fields: [id_ref], references: [id], onDelete: SetNull)
+  children      DataUser[]      @relation("Children")
+  DataToko      DataToko[]
+  DataTransaksi DataTransaksi[]
 }
 
 model DataToko {
-  id          Int          @id @default(autoincrement())
-  nama_toko   String
-  alamat_toko String
-  id_user     String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  data_user   DataUser     @relation(fields: [id_user], references: [id], onDelete: Cascade)
-  DataProduk  DataProduk[]
+  id                  Int                   @id @default(autoincrement())
+  nama_toko           String
+  alamat_toko         String
+  id_user             String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  data_user           DataUser              @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  DataProduk          DataProduk[]
+  DataDetailTransaksi DataDetailTransaksi[]
 }
 
 model DataKategori {
-  id         Int          @id @default(autoincrement())
-  kategori   String       @unique
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  DataProduk DataProduk[]
+  id                  Int                   @id @default(autoincrement())
+  kategori            String                @unique
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  DataProduk          DataProduk[]
+  DataDetailTransaksi DataDetailTransaksi[]
 }
 
 model DataProduk {
-  id            Int           @id @default(autoincrement())
-  id_toko       Int
-  id_kategori   Int?
-  nama_produk   String
-  deskripsi     String        @db.Text
-  foto          String
-  harga         Int
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  data_toko     DataToko      @relation(fields: [id_toko], references: [id], onDelete: Cascade)
-  data_kategori DataKategori? @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
+  id                  Int                   @id @default(autoincrement())
+  id_toko             Int
+  id_kategori         Int?
+  nama_produk         String
+  deskripsi           String                @db.Text
+  foto                String
+  harga               Int
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  data_toko           DataToko              @relation(fields: [id_toko], references: [id], onDelete: Cascade)
+  data_kategori       DataKategori?         @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
+  DataDetailTransaksi DataDetailTransaksi[]
+}
+
+model DataTransaksi {
+  id                  String                @id
+  id_user             String
+  qty                 Int
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  DataDetailTransaksi DataDetailTransaksi[]
+  data_user           DataUser              @relation(fields: [id_user], references: [id], onDelete: Cascade)
+}
+
+model DataDetailTransaksi {
+  id             Int           @id @default(autoincrement())
+  id_transaksi   String
+  id_produk      Int
+  id_toko        Int
+  id_kategori    Int?
+  nama_produk    String
+  deskripsi      String        @db.Text
+  foto           String
+  harga          Int
+  qty            Int // Baru
+  total          Int // Baru
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  data_transaksi DataTransaksi @relation(fields: [id_transaksi], references: [id], onDelete: Cascade)
+  data_produk    DataProduk    @relation(fields: [id_produk], references: [id], onDelete: Restrict)
+  data_toko      DataToko      @relation(fields: [id_toko], references: [id], onDelete: Restrict)
+  data_kategori  DataKategori? @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
 }
 
 enum Role {
   TOKO // Menambahkan peran "TOKO"
   CUSTOMER // Menambahkan peran "CUSTOMER"
+}
+
+enum StatusTransaksi {
+  MENUNGGU // Menambahkan peran "TOKO"
+  DIPROSES // Menambahkan peran "CUSTOMER"
+  SELESAI // Menambahkan peran "CUSTOMER"
+  DIBATALKAN // Menambahkan peran "CUSTOMER"
 }
 
 // npx prisma migrate dev
