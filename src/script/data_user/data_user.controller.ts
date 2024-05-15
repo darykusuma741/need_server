@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { GenRandomID, GenRandomOTP } from '../../class/random_string';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ErrorH } from '../../class/handle_error';
+import { LogikaMematikan } from '../../class/logika_mematikan';
 
 const prisma = new PrismaClient();
 const dataUser = prisma.dataUser;

@@ -40,7 +40,7 @@ export default class DataTransaksiController {
       const result = await dataHistoryPajak.findMany({
         where: {
           keterangan: 'AFFILIATE',
-          data_detail_transaksi: { data_transaksi: { data_user: { id_ref: id_affiliate } } },
+          id_user_affiliate: id_affiliate,
         },
         include: { data_detail_transaksi: { include: { data_transaksi: true } } },
       });

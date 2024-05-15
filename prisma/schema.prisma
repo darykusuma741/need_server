@@ -14,20 +14,22 @@ datasource db {
 }
 
 model DataUser {
-  id            String          @id
-  nama          String?
-  role          Role
-  no_hp         String          @unique
-  id_ref        String?
-  otp           String
-  saldo         Int             @default(0)
-  active        Boolean
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  parent        DataUser?       @relation("Children", fields: [id_ref], references: [id], onDelete: SetNull)
-  children      DataUser[]      @relation("Children")
-  DataToko      DataToko[]
-  DataTransaksi DataTransaksi[]
+  id               String             @id
+  nama             String?
+  role             Role
+  no_hp            String             @unique
+  id_ref           String?
+  otp              String
+  status           StatusUser?
+  saldo            Int                @default(0)
+  active           Boolean
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  parent           DataUser?          @relation("Children", fields: [id_ref], references: [id], onDelete: SetNull)
+  children         DataUser[]         @relation("Children")
+  DataToko         DataToko[]
+  DataTransaksi    DataTransaksi[]
+  DataHistoryPajak DataHistoryPajak[]
 }
 
 model DataToko {
@@ -105,11 +107,13 @@ model DataHistoryPajak {
   id_detail_transaksi   Int
   total_pajak           Int
   total_transaksi       Int
+  id_user_affiliate     String?
   status                StatusPajak
   keterangan            KeteranganPajak
   metode_pembayaran     MetodePembayaranPajak?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  data_user_affiliate   DataUser?              @relation(fields: [id_user_affiliate], references: [id], onDelete: Cascade)
   data_detail_transaksi DataDetailTransaksi    @relation(fields: [id_detail_transaksi], references: [id], onDelete: Cascade)
 }
 
@@ -138,6 +142,12 @@ enum KeteranganPajak {
 enum MetodePembayaranPajak {
   TRANSDER // Menambahkan status "TRANSDER"
   TUNAI // Menambahkan status "TUNAI"
+}
+
+enum StatusUser {
+  NS // Menambahkan status "NS"
+  NEM // Menambahkan status "NEM"
+  NET // Menambahkan status "NET"
 }
 
 // npx prisma migrate dev
