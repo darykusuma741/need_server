@@ -28,6 +28,7 @@ const corsOptions = {
   allowedHeaders: 'Content-Type,Authorization,Accept,Access-Control-Allow-Origin',
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 app.use(express.static(__dirname));
 app.use(bodyParser.json({ limit: '50mb' }));
