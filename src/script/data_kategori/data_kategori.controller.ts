@@ -13,7 +13,7 @@ export default class DataKategoriController {
       const result = await dataKategori.findMany();
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -24,7 +24,7 @@ export default class DataKategoriController {
       if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 

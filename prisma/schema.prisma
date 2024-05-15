@@ -69,7 +69,9 @@ model DataProduk {
 model DataTransaksi {
   id                  String                @id
   id_user             String
-  qty                 Int
+  total               Int
+  sub_total           Int
+  status              StatusTransaksi
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   DataDetailTransaksi DataDetailTransaksi[]
@@ -102,10 +104,10 @@ enum Role {
 }
 
 enum StatusTransaksi {
-  MENUNGGU // Menambahkan peran "TOKO"
-  DIPROSES // Menambahkan peran "CUSTOMER"
-  SELESAI // Menambahkan peran "CUSTOMER"
-  DIBATALKAN // Menambahkan peran "CUSTOMER"
+  MENUNGGU // Menambahkan status "MENUNGGU"
+  DIPROSES // Menambahkan status "DIPROSES"
+  SELESAI // Menambahkan status "SELESAI"
+  DIBATALKAN // Menambahkan status "DIBATALKAN"
 }
 
 // npx prisma migrate dev

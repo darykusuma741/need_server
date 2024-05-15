@@ -13,7 +13,7 @@ export default class DataTokoController {
       const result = await dataToko.findMany();
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -23,7 +23,7 @@ export default class DataTokoController {
       const result = await dataToko.findMany({ where: { id_user: id_user } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -34,7 +34,7 @@ export default class DataTokoController {
       if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 

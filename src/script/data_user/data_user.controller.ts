@@ -13,7 +13,7 @@ export default class DataUserController {
       const result = await dataUser.findMany({ include: { DataToko: true } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -24,7 +24,7 @@ export default class DataUserController {
       if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -122,6 +122,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
     res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
   }
 }
+
 async function cariIDKosong(): Promise<string> {
   const nmb = GenRandomID();
   const rslt = await dataUser.findFirst({ where: { id: nmb } });

@@ -1,6 +1,7 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export function ErrorH(error: any): string {
+  console.log('dsd');
   var pesanError = error;
 
   if (error instanceof PrismaClientKnownRequestError) {

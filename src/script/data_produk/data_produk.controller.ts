@@ -12,7 +12,7 @@ export default class DataProdukController {
       const result = await dataProduk.findMany({ include: { data_kategori: true, data_toko: true } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -23,7 +23,7 @@ export default class DataProdukController {
       if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
-      res.status(500).json({ message: `${error}`, status: 'Error' });
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
 
@@ -40,12 +40,12 @@ export default class DataProdukController {
       if (!hasil) throw 'ID Tidak Ditemukan';
       var foto: string = hasil.foto;
       if (req.file) {
-        try {
-          fs.unlinkSync('uploads/image/' + hasil.foto);
-          console.log('File berhasil dihapus');
-        } catch (err) {
-          console.error('Gagal menghapus file:', err);
-        }
+        // try {
+        //   fs.unlinkSync('uploads/image/' + hasil.foto);
+        //   console.log('File berhasil dihapus');
+        // } catch (err) {
+        //   console.error('Gagal menghapus file:', err);
+        // }
         foto = req.file.path.replace(/^.*[\\\/]/, '');
       }
       const result = await dataProduk.update({
@@ -78,12 +78,12 @@ export default class DataProdukController {
         },
       });
 
-      try {
-        fs.unlinkSync('uploads/image/' + result.foto);
-        console.log('File berhasil dihapus');
-      } catch (err) {
-        console.error('Gagal menghapus file:', err);
-      }
+      // try {
+      //   fs.unlinkSync('uploads/image/' + result.foto);
+      //   console.log('File berhasil dihapus');
+      // } catch (err) {
+      //   console.error('Gagal menghapus file:', err);
+      // }
 
       res.json({ data: result, status: 'Success' });
     } catch (error) {
