@@ -79,23 +79,38 @@ model DataTransaksi {
 }
 
 model DataDetailTransaksi {
-  id             Int           @id @default(autoincrement())
-  id_transaksi   String
-  id_produk      Int
-  id_toko        Int
-  id_kategori    Int?
-  nama_produk    String
-  deskripsi      String        @db.Text
-  foto           String
-  harga          Int
-  qty            Int // Baru
-  total          Int // Baru
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  data_transaksi DataTransaksi @relation(fields: [id_transaksi], references: [id], onDelete: Cascade)
-  data_produk    DataProduk    @relation(fields: [id_produk], references: [id], onDelete: Restrict)
-  data_toko      DataToko      @relation(fields: [id_toko], references: [id], onDelete: Restrict)
-  data_kategori  DataKategori? @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
+  id               Int                @id @default(autoincrement())
+  id_transaksi     String
+  id_produk        Int
+  id_toko          Int
+  pajak_toko       Int                @default(0)
+  id_kategori      Int?
+  nama_produk      String
+  deskripsi        String             @db.Text
+  foto             String
+  harga            Int
+  qty              Int // Baru
+  total            Int // Baru
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  data_transaksi   DataTransaksi      @relation(fields: [id_transaksi], references: [id], onDelete: Cascade)
+  data_produk      DataProduk         @relation(fields: [id_produk], references: [id], onDelete: Restrict)
+  data_toko        DataToko           @relation(fields: [id_toko], references: [id], onDelete: Restrict)
+  data_kategori    DataKategori?      @relation(fields: [id_kategori], references: [id], onDelete: SetNull)
+  DataHistoryPajak DataHistoryPajak[]
+}
+
+model DataHistoryPajak {
+  id                    Int                    @id @default(autoincrement())
+  id_detail_transaksi   Int
+  total_pajak           Int
+  total_transaksi       Int
+  status                StatusPajak
+  keterangan            KeteranganPajak
+  metode_pembayaran     MetodePembayaranPajak?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  data_detail_transaksi DataDetailTransaksi    @relation(fields: [id_detail_transaksi], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -108,6 +123,21 @@ enum StatusTransaksi {
   DIPROSES // Menambahkan status "DIPROSES"
   SELESAI // Menambahkan status "SELESAI"
   DIBATALKAN // Menambahkan status "DIBATALKAN"
+}
+
+enum StatusPajak {
+  TERBAYAR // Menambahkan status "TERBAYAR"
+  BELUM // Menambahkan status "BELUM"
+}
+
+enum KeteranganPajak {
+  APLIKASI // Menambahkan status "APLIKASI"
+  AFFILIATE // Menambahkan status "AFFILIATE"
+}
+
+enum MetodePembayaranPajak {
+  TRANSDER // Menambahkan status "TRANSDER"
+  TUNAI // Menambahkan status "TUNAI"
 }
 
 // npx prisma migrate dev

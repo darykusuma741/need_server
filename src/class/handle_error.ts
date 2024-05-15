@@ -1,9 +1,12 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 export function ErrorH(error: any): string {
-  console.log('dsd');
   var pesanError = error;
 
+  if (error instanceof PrismaClientValidationError) {
+    console.log(`ADA ERROR (${error.name})`);
+    pesanError = `Terjadi kesalahan (${error.name})`;
+  }
   if (error instanceof PrismaClientKnownRequestError) {
     console.log(`ADA ERROR (${error.code})`);
 
