@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  need_server: 
+    container_name: 'need_server'
+    build: .
+    hostname: need_server
+    volumes:
+      - .:/need_server
+      - node_modules:/need_server/node_modules
+    ports:
+      - 8802:8802
+      # - 80:8081
+    stdin_open: true
+    environment:
+      - PORT=8802
+      - DATABASE_URL=postgresql://postgres:61278744@156.67.214.199:5432/need_server?schema=public
+    # env_file:
+    #   - ./config/environment.env
+    command: npm start
+    # command: npm run dev
+    # networks:
+    #   - example-net
+volumes:
+  node_modules:
+networks:
+  example-net:
+    external: true
