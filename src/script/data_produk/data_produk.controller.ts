@@ -8,6 +8,8 @@ const dataProduk = prisma.dataProduk;
 
 export default class DataProdukController {
   public async GetData(_: Request, res: Response) {
+    console.log('REQUEST DATA PRODUK');
+
     try {
       const result = await dataProduk.findMany({ include: { data_kategori: true, data_toko: true } });
       res.json({ data: result, status: 'Success' });
