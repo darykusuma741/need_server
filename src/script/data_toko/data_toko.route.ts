@@ -9,6 +9,6 @@ router.post('/get-data-byid', ctr.GetById);
 router.post('/get-data-byid-user', ctr.GetByIdUser);
 router.post('/create-data', ctr.CreateData);
 router.put('/update-data', ctr.UpdateData);
-router.delete('/delete-data', ctr.DeleteData);
+router.post('/delete-data', ctr.DeleteData);
 
 export const DataTokoRouter = router;

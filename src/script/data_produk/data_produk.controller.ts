@@ -21,6 +21,19 @@ export default class DataProdukController {
       const id = req.body.id;
       const result = await dataProduk.findFirst({ where: { id }, include: { data_kategori: true, data_toko: true } });
       if (!result) throw 'Data tidak ditemukan';
+      // console.log(result);
+
+      res.json({ data: result, status: 'Success' });
+    } catch (error) {
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
+    }
+  }
+
+  public async GetByIdUser(req: Request, res: Response) {
+    try {
+      const id_user = req.body.id_user;
+      const result = await dataProduk.findMany({ where: { data_toko: { id_user: id_user } }, include: { data_kategori: true, data_toko: true } });
+
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -39,6 +52,10 @@ export default class DataProdukController {
       const hasil = await dataProduk.findFirst({ where: { id: id } });
       if (!hasil) throw 'ID Tidak Ditemukan';
       var foto: string = hasil.foto;
+
+      if (req.file) {
+        foto = req.file.path.replace(/^.*[\\\/]/, '');
+      }
       if (req.file) {
         // try {
         //   fs.unlinkSync('uploads/image/' + hasil.foto);
@@ -72,6 +89,7 @@ export default class DataProdukController {
   public async DeleteData(req: Request, res: Response) {
     try {
       const id = req.body.id;
+
       const result = await dataProduk.delete({
         where: {
           id: id,

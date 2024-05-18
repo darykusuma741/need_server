@@ -8,7 +8,7 @@ router.get('/get-data', ctr.GetData);
 router.post('/create-data-customer', ctr.CreateDataCustomer);
 router.post('/create-data-toko', ctr.CreateDataToko);
 router.post('/get-data-by-nohp', ctr.GetByNoHp);
-router.put('/kirim-ulang-otp', ctr.KirimOTP);
+router.put('/kirim-otp', ctr.KirimOTP);
 router.put('/update-data', ctr.UpdateData);
 router.put('/cek-otp', ctr.CekOTP);
 

@@ -15,7 +15,7 @@ datasource db {
 
 model DataUser {
   id               String             @id
-  nama             String?
+  nama             String             @default("-")
   role             Role
   no_hp            String             @unique
   id_ref           String?

@@ -7,8 +7,9 @@ const ctr = new DataProdukController();
 
 router.get('/get-data', ctr.GetData);
 router.post('/get-data-byid', ctr.GetById);
+router.post('/get-data-byid-user', ctr.GetByIdUser);
 router.post('/create-data', UploadImageMulter.single('file_image'), ctr.CreateData);
 router.put('/update-data', UploadImageMulter.single('file_image'), ctr.UpdateData);
-router.delete('/delete-data', ctr.DeleteData);
+router.post('/delete-data', ctr.DeleteData);
 
 export const DataProdukRouter = router;

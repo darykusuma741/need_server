@@ -4,6 +4,7 @@ import { GenRandomID, GenRandomIDTrs, GenRandomOTP } from '../../class/random_st
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ErrorH } from '../../class/handle_error';
 import { LogikaMematikan } from '../../class/logika_mematikan';
+import { KirimPesan } from '../../class/kirim_pesan';
 
 const prisma = new PrismaClient();
 const dataUser = prisma.dataUser;
@@ -45,6 +46,20 @@ export default class DataTransaksiController {
     }
   }
 
+  public async GetDataByIdToko(req: Request, res: Response) {
+    try {
+      const id_toko = req.body.id_toko;
+
+      await LogikaMematikan();
+      const result = await dataTransaksi.findMany({ where: { DataDetailTransaksi: { every: { data_toko: { id_user: id_toko } } } }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
+      res.json({ data: result, status: 'Success' });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
+    }
+  }
+
   public async UpdateStatus(req: Request, res: Response) {
     try {
       const id = req.body.id;
@@ -57,7 +72,7 @@ export default class DataTransaksiController {
       const resultAfter = await dataTransaksi.update({
         where: { id: id },
         data: { status: status },
-        include: { data_user: true, DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } },
+        include: { data_user: true, DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: { include: { data_user: true } } } } },
       });
 
       const status_before = resultBefore.status;
@@ -88,6 +103,17 @@ export default class DataTransaksiController {
           }
         }
       }
+      var isiPesan = ``;
+      if (status == 'DIBATALKAN') {
+        isiPesan = `Maaf ya,\nTransaksi dengan id *${id}*. Statusnya *DIBATALAKAN* harap coba kembali.\n\nTerimakasih\n#needshop`;
+      } else if (status == 'DIPROSES') {
+        isiPesan = `Halo kak ${resultAfter.data_user.nama},\nTransaksi dengan id *${id}*. Statusnya *SEDANG DIPROSES*.\n\nTerimakasih\n#needshop`;
+      } else if (status == 'MENUNGGU') {
+        isiPesan = `Halo kak ${resultAfter.data_user.nama},\nTransaksi dengan id *${id}*. Statusnya *MENUNGGU KONFIRMASI TOKO*.\n\nTerimakasih\n#needshop`;
+      } else {
+        isiPesan = `Selamat kak ${resultAfter.data_user.nama},\nTransaksi dengan id *${id}*. Statusnya *TELAH SELESAI*.\n\nTerimakasih\n#needshop`;
+      }
+      await KirimPesan(isiPesan, resultAfter.data_user.no_hp);
       res.json({ data: resultAfter, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -101,6 +127,24 @@ export default class DataTransaksiController {
       const sub_total = req.body.sub_total;
       const id_user = req.body.id_user;
       const detail_transaksi: [] = req.body.detail_transaksi;
+
+      var dtDetailTransaksi: Prisma.DataDetailTransaksiCreateManyInput[] = [];
+      detail_transaksi.forEach((e: any) => {
+        const pajak_toko = (parseInt(e.total) * 10) / 100;
+        dtDetailTransaksi.push({
+          deskripsi: e.deskripsi,
+          foto: e.foto,
+          harga: parseInt(e.harga),
+          qty: parseInt(e.qty),
+          id_kategori: e.id_kategori,
+          id_produk: e.id_produk,
+          id_toko: e.id_toko,
+          pajak_toko: pajak_toko,
+          id_transaksi: id,
+          nama_produk: e.nama_produk,
+          total: parseInt(e.total),
+        });
+      });
       await dataTransaksi.create({
         data: {
           id: id,
@@ -110,32 +154,20 @@ export default class DataTransaksiController {
           status: 'MENUNGGU',
         },
       });
-      var dtDetailTransaksi: Prisma.DataDetailTransaksiCreateManyInput[] = [];
-      detail_transaksi.forEach((e: any) => {
-        const pajak_toko = (parseInt(e.total) * 10) / 100;
-        dtDetailTransaksi.push({
-          deskripsi: e.deskripsi,
-          foto: e.foto,
-          harga: e.harga,
-          qty: e.qty,
-          id_kategori: e.id_kategori,
-          id_produk: e.id_produk,
-          id_toko: e.id_toko,
-          pajak_toko: pajak_toko,
-          id_transaksi: id,
-          nama_produk: e.nama_produk,
-          total: e.total,
-        });
-      });
       await dataDetailTransaksi.createMany({
         data: dtDetailTransaksi,
       });
       const result = await dataTransaksi.findFirst({
-        include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } },
+        include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: { include: { data_user: true } } } }, data_user: true },
         where: { id: id },
       });
+      const isiPesan = `Halo ${result?.DataDetailTransaksi[0].data_toko.nama_toko},\nAda permintaan transaksi dengan kode transaksi *${result?.id}*, dari customer *${result?.data_user.no_hp}*.\n\nMohon cek aplikasimu. Terimakasih.\n#needshop`;
+      await KirimPesan(isiPesan, result?.DataDetailTransaksi[0].data_toko.data_user.no_hp!);
+
       res.json({ data: result, status: 'Success' });
     } catch (error) {
+      console.log(error);
+
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
@@ -191,11 +223,23 @@ async function BuatPajakAffiliate(id_user: string, stsMember: boolean, id_detail
     if (aas.ns1 != null) {
       dtsv.total_pajak = (total_transaksi * ns1) / 100;
       dtsv.id_user_affiliate = aas.ns1;
+      try {
+        var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+        if (!result) throw 'Tidak ditemukan id affiliatenya';
+        var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${id_user}.\nSebesar *${formatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
+        await KirimPesan(isiPesan, result.no_hp);
+      } catch (error) {}
       dataSave.push(dtsv);
     }
     if (aas.nem2 != null) {
       dtsv.total_pajak = (total_transaksi * nem2) / 100;
       dtsv.id_user_affiliate = aas.nem2;
+      try {
+        var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+        if (!result) throw 'Tidak ditemukan id affiliatenya';
+        var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${id_user}.\nSebesar *${formatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
+        await KirimPesan(isiPesan, result.no_hp);
+      } catch (error) {}
       dataSave.push(dtsv);
     }
   }
@@ -203,17 +247,35 @@ async function BuatPajakAffiliate(id_user: string, stsMember: boolean, id_detail
   if (aas.nem1 != null) {
     dtsv.total_pajak = (total_transaksi * nem1) / 100;
     dtsv.id_user_affiliate = aas.nem1;
+    try {
+      var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+      if (!result) throw 'Tidak ditemukan id affiliatenya';
+      var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${id_user}.\nSebesar *${formatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
+      await KirimPesan(isiPesan, result.no_hp);
+    } catch (error) {}
     dataSave.push(dtsv);
   }
 
   if (aas.net1 != null) {
     dtsv.total_pajak = (total_transaksi * net1) / 100;
     dtsv.id_user_affiliate = aas.net1;
+    try {
+      var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+      if (!result) throw 'Tidak ditemukan id affiliatenya';
+      var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${id_user}.\nSebesar *${formatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
+      await KirimPesan(isiPesan, result.no_hp);
+    } catch (error) {}
     dataSave.push(dtsv);
   }
   if (aas.net2 != null) {
     dtsv.total_pajak = (total_transaksi * net2) / 100;
     dtsv.id_user_affiliate = aas.net2;
+    try {
+      var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+      if (!result) throw 'Tidak ditemukan id affiliatenya';
+      var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${id_user}.\nSebesar *${formatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
+      await KirimPesan(isiPesan, result.no_hp);
+    } catch (error) {}
     dataSave.push(dtsv);
   }
 
@@ -286,4 +348,16 @@ async function updateStatusMember(id_user: string, status: $Enums.StatusTransaks
   }
   await LogikaMematikan();
   return stsMember;
+}
+
+function formatRupiah(angka: number): string {
+  let rupiah = '';
+  const angkaRev = angka.toString().split('').reverse().join('');
+  for (let i = 0; i < angkaRev.length; i++) {
+    if (i % 3 === 0 && i !== 0) {
+      rupiah += '.';
+    }
+    rupiah += angkaRev[i];
+  }
+  return 'Rp ' + rupiah.split('').reverse().join('');
 }

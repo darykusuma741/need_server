@@ -4,6 +4,8 @@ import { GenRandomID, GenRandomOTP } from '../../class/random_string';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ErrorH } from '../../class/handle_error';
 import { LogikaMematikan } from '../../class/logika_mematikan';
+import axios from 'axios';
+import { KirimPesan } from '../../class/kirim_pesan';
 
 const prisma = new PrismaClient();
 const dataUser = prisma.dataUser;
@@ -33,9 +35,11 @@ export default class DataUserController {
     try {
       const no_hp = req.body.no_hp;
       const nama = req.body.nama;
+      const id_ref = req.body.id_ref;
       const result = await dataUser.update({
         data: {
           nama: nama,
+          id_ref: id_ref,
         },
         include: { DataToko: true },
         where: {
@@ -59,7 +63,7 @@ export default class DataUserController {
 
   public async KirimOTP(req: Request, res: Response) {
     try {
-      const no_hp = req.body.no_hp;
+      const no_hp: string = req.body.no_hp;
       const otp = GenRandomOTP();
 
       const result = await dataUser.update({
@@ -67,8 +71,11 @@ export default class DataUserController {
         include: { DataToko: true },
         where: { no_hp: no_hp },
       });
+      await KirimPesan(`Berikut adalah kode OTPnya. ${otp}`, no_hp);
       res.json({ data: result, status: 'Success' });
     } catch (error) {
+      console.log(error);
+
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
@@ -117,6 +124,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
       },
       include: { DataToko: true },
     });
+    await KirimPesan(`Halo ${nama}, Berikut adalah kode OTPnya. ${otp}`, no_hp);
 
     res.json({ data: result, status: 'Success' });
   } catch (error) {

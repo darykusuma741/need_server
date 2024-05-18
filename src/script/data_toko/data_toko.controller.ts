@@ -79,6 +79,7 @@ export default class DataTokoController {
       const nama_toko = req.body.nama_toko;
       const alamat_toko = req.body.alamat_toko;
       const id_user = req.body.id_user;
+
       const result = await dataToko.create({
         data: {
           id_user: id_user,
