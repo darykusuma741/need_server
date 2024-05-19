@@ -30,7 +30,7 @@ export async function BuatPajak(status_before: $Enums.StatusTransaksi, status_af
           id_detail_transaksi: detail.id,
         },
       });
-      console.log(`${data_user.id_ref} ini id referal ${data_user.id}`);
+      console.log(`${data_user.id_ref} mereferalkan ${data_user.id}`);
       if (data_user.id_ref != null) {
         await BuatPajakAffiliate(data_user.id_ref, data_user.id, statusMember, detail.id, detail.total);
       }
@@ -46,6 +46,8 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
     net2: null,
     ns1: null,
   });
+  console.log(aas);
+
   var dataSave: Prisma.DataHistoryPajakCreateManyInput[] = [];
   var ns1 = 17;
   var nem1 = 17;
@@ -122,7 +124,7 @@ interface ii {
 }
 
 async function cariCari(id_user: string, bb: ii): Promise<ii> {
-  const dtU = await dataUser.findUnique({ where: { id: id_user } });
+  const dtU = await dataUser.findFirst({ where: { id: id_user } });
   if (dtU) {
     var bc = bb;
     if (dtU.status == 'NS' && bc.ns1 == null && bc.nem1 == null && bc.nem1 == null && bc.nem2 == null && bc.net1 == null && bc.net2 == null) {
