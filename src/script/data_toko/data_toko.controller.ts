@@ -10,7 +10,7 @@ const dataToko = prisma.dataToko;
 export default class DataTokoController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataToko.findMany();
+      const result = await dataToko.findMany({ orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -20,7 +20,7 @@ export default class DataTokoController {
   public async GetByIdUser(req: Request, res: Response) {
     try {
       const id_user = req.body.id_user;
-      const result = await dataToko.findMany({ where: { id_user: id_user } });
+      const result = await dataToko.findMany({ where: { id_user: id_user }, orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });

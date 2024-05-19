@@ -14,7 +14,7 @@ const dataDetailTransaksi = prisma.dataDetailTransaksi;
 export default class DataTransaksiController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataTransaksi.findMany({ include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
+      const result = await dataTransaksi.findMany({ include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } }, orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -24,7 +24,7 @@ export default class DataTransaksiController {
   public async GetDataById(req: Request, res: Response) {
     try {
       const id = req.body.id;
-      const result = await dataTransaksi.findFirst({ where: { id: id }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
+      const result = await dataTransaksi.findFirst({ where: { id: id }, orderBy: { createdAt: 'desc' }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
       if (!result) throw 'Data tidak ditemukan';
       res.json({ data: result, status: 'Success' });
     } catch (error) {
@@ -35,7 +35,7 @@ export default class DataTransaksiController {
   public async GetDataByIdUser(req: Request, res: Response) {
     try {
       const id_user = req.body.id_user;
-      const result = await dataTransaksi.findMany({ where: { id_user: id_user }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
+      const result = await dataTransaksi.findMany({ where: { id_user: id_user }, orderBy: { createdAt: 'desc' }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -45,7 +45,11 @@ export default class DataTransaksiController {
   public async GetDataByIdToko(req: Request, res: Response) {
     try {
       const id_toko = req.body.id_toko;
-      const result = await dataTransaksi.findMany({ where: { DataDetailTransaksi: { every: { data_toko: { id_user: id_toko } } } }, include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } } });
+      const result = await dataTransaksi.findMany({
+        where: { DataDetailTransaksi: { every: { data_toko: { id_user: id_toko } } } },
+        orderBy: { createdAt: 'desc' },
+        include: { DataDetailTransaksi: { include: { data_produk: true, data_kategori: true, data_toko: true } } },
+      });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       console.log(error);

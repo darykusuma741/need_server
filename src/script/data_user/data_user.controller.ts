@@ -13,7 +13,7 @@ const dataUser = prisma.dataUser;
 export default class DataUserController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataUser.findMany({ include: { DataToko: true } });
+      const result = await dataUser.findMany({ include: { DataToko: true }, orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });

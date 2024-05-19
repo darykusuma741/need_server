@@ -11,7 +11,7 @@ export default class DataProdukController {
     console.log('REQUEST DATA PRODUK');
 
     try {
-      const result = await dataProduk.findMany({ include: { data_kategori: true, data_toko: true } });
+      const result = await dataProduk.findMany({ include: { data_kategori: true, data_toko: true }, orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -34,7 +34,7 @@ export default class DataProdukController {
   public async GetByIdUser(req: Request, res: Response) {
     try {
       const id_user = req.body.id_user;
-      const result = await dataProduk.findMany({ where: { data_toko: { id_user: id_user } }, include: { data_kategori: true, data_toko: true } });
+      const result = await dataProduk.findMany({ where: { data_toko: { id_user: id_user } }, include: { data_kategori: true, data_toko: true }, orderBy: { createdAt: 'desc' } });
 
       res.json({ data: result, status: 'Success' });
     } catch (error) {

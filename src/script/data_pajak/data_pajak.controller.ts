@@ -10,7 +10,7 @@ const dataHistoryPajak = prisma.dataHistoryPajak;
 export default class DataTransaksiController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataHistoryPajak.findMany({ include: { data_detail_transaksi: { include: { data_transaksi: true } } } });
+      const result = await dataHistoryPajak.findMany({ include: { data_detail_transaksi: { include: { data_transaksi: true } } }, orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
@@ -25,6 +25,7 @@ export default class DataTransaksiController {
         where: {
           data_detail_transaksi: { data_toko: { id: id_toko } },
         },
+        orderBy: { createdAt: 'desc' },
         include: { data_detail_transaksi: { include: { data_transaksi: true } } },
       });
       res.json({ data: result, status: 'Success' });
@@ -42,6 +43,7 @@ export default class DataTransaksiController {
           keterangan: 'AFFILIATE',
           id_user_affiliate: id_affiliate,
         },
+        orderBy: { createdAt: 'desc' },
         include: { data_detail_transaksi: { include: { data_transaksi: true } } },
       });
       res.json({ data: result, status: 'Success' });

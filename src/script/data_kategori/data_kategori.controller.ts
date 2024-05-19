@@ -10,7 +10,7 @@ const dataKategori = prisma.dataKategori;
 export default class DataKategoriController {
   public async GetData(_: Request, res: Response) {
     try {
-      const result = await dataKategori.findMany();
+      const result = await dataKategori.findMany({ orderBy: { createdAt: 'desc' } });
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });

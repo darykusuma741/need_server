@@ -64,7 +64,7 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, id_detai
     total_transaksi: total_transaksi,
     id_detail_transaksi: id_detail_transaksi,
   };
-  const rsltTransaksi = await dataTransaksi.findMany({ where: { id_user: id_user, status: 'SELESAI' } });
+  const rsltTransaksi = await dataTransaksi.findMany({ where: { id_user: id_user, status: 'SELESAI' }, orderBy: { createdAt: 'desc' } });
   var repeat: boolean = rsltTransaksi.length > 1;
 
   if (repeat) {
