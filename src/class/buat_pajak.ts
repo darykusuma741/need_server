@@ -7,8 +7,9 @@ import { BuatPesanPemasukanAffiliate } from './buat_pesan';
 const prisma = new PrismaClient();
 const dataUser = prisma.dataUser;
 const dataHistoryPajak = prisma.dataHistoryPajak;
+const dataTransaksi = prisma.dataTransaksi;
 
-export async function BuatPajak(status_before: $Enums.StatusTransaksi, status_after: $Enums.StatusTransaksi, data_detail_transaksi: DataDetailTransaksi[], data_user: DataUser, statusMember: boolean) {
+export async function BuatPajak(status_before: $Enums.StatusTransaksi, status_after: $Enums.StatusTransaksi, data_detail_transaksi: DataDetailTransaksi[], data_user: DataUser) {
   await LogikaMematikan();
   if (status_before == 'SELESAI' && status_after != 'SELESAI') {
     // hapus pajak
@@ -32,13 +33,13 @@ export async function BuatPajak(status_before: $Enums.StatusTransaksi, status_af
       });
       console.log(`${data_user.id_ref} mereferalkan ${data_user.id}`);
       if (data_user.id_ref != null) {
-        await BuatPajakAffiliate(data_user.id_ref, data_user.id, statusMember, detail.id, detail.total);
+        await BuatPajakAffiliate(data_user.id_ref, data_user.id, detail.id, detail.total);
       }
     }
   }
 }
 
-async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMember: boolean, id_detail_transaksi: number, total_transaksi: number) {
+async function BuatPajakAffiliate(id_user_aff: string, id_user: string, id_detail_transaksi: number, total_transaksi: number) {
   var aas: ii = await cariCari(id_user_aff, {
     nem1: null,
     nem2: null,
@@ -63,7 +64,10 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
     total_transaksi: total_transaksi,
     id_detail_transaksi: id_detail_transaksi,
   };
-  if (stsMember) {
+  const rsltTransaksi = await dataTransaksi.findMany({ where: { id_user: id_user, status: 'SELESAI' } });
+  var repeat: boolean = rsltTransaksi.length >= 1;
+
+  if (repeat) {
     ns1 = 0;
     nem1 = 17;
     nem2 = 0;
