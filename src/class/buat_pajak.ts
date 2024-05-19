@@ -30,6 +30,7 @@ export async function BuatPajak(status_before: $Enums.StatusTransaksi, status_af
           id_detail_transaksi: detail.id,
         },
       });
+      console.log(`${data_user.id_ref} ini id referal ${data_user.id}`);
       if (data_user.id_ref != null) {
         await BuatPajakAffiliate(data_user.id_ref, data_user.id, statusMember, detail.id, detail.total);
       }
