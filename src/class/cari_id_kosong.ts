@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client/extension';
+import { PrismaClient } from '@prisma/client';
 import { GenRandomIDTrs } from './random_string';
 
 const prisma = new PrismaClient();

@@ -51,7 +51,6 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
   var nem2 = 3;
   var net1 = 6;
   var net2 = 1;
-
   var dtsv: Prisma.DataHistoryPajakCreateManyInput = {
     keterangan: 'AFFILIATE',
     metode_pembayaran: null,
@@ -61,7 +60,6 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
     total_transaksi: total_transaksi,
     id_detail_transaksi: id_detail_transaksi,
   };
-
   if (stsMember) {
     ns1 = 0;
     nem1 = 17;
@@ -73,12 +71,14 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
       dtsv.total_pajak = (total_transaksi * ns1) / 100;
       dtsv.id_user_affiliate = aas.ns1;
       await BuatPesanPemasukanAffiliate(id_user, dtsv);
+
       dataSave.push(dtsv);
     }
     if (aas.nem2 != null) {
       dtsv.total_pajak = (total_transaksi * nem2) / 100;
       dtsv.id_user_affiliate = aas.nem2;
       await BuatPesanPemasukanAffiliate(id_user, dtsv);
+
       dataSave.push(dtsv);
     }
   }
@@ -95,15 +95,16 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, stsMembe
     dtsv.total_pajak = (total_transaksi * net1) / 100;
     dtsv.id_user_affiliate = aas.net1;
     await BuatPesanPemasukanAffiliate(id_user, dtsv);
+
     dataSave.push(dtsv);
   }
   if (aas.net2 != null) {
     dtsv.total_pajak = (total_transaksi * net2) / 100;
     dtsv.id_user_affiliate = aas.net2;
     await BuatPesanPemasukanAffiliate(id_user, dtsv);
+
     dataSave.push(dtsv);
   }
-
   if (dataSave.length > 0) {
     await dataHistoryPajak.createMany({
       data: dataSave,
@@ -118,6 +119,7 @@ interface ii {
   net1: string | null;
   net2: string | null;
 }
+
 async function cariCari(id_user: string, bb: ii): Promise<ii> {
   const dtU = await dataUser.findUnique({ where: { id: id_user } });
   if (dtU) {

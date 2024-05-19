@@ -1,6 +1,5 @@
-import { $Enums, DataUser, Prisma } from '@prisma/client';
+import { $Enums, DataUser, Prisma, PrismaClient } from '@prisma/client';
 import { KirimPesan } from './kirim_pesan';
-import { PrismaClient } from '@prisma/client/extension';
 import { FormatRupiah } from './format_rupiah';
 
 const prisma = new PrismaClient();
@@ -26,7 +25,7 @@ export async function BuatPesanTransaksi(status_after: $Enums.StatusTransaksi, d
 
 export async function BuatPesanPemasukanAffiliate(dari_id_user: String, dtsv: Prisma.DataHistoryPajakCreateManyInput) {
   try {
-    var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate } });
+    var result = await dataUser.findFirst({ where: { id: dtsv.id_user_affiliate! } });
     if (!result) throw 'Tidak ditemukan id affiliatenya';
     var isiPesan = `Selamat,\nKamu mmendapatkan pemasukan dari ${dari_id_user}.\nSebesar *${FormatRupiah(dtsv.total_pajak)}*\n\nTerimakasih\n#needshop`;
     await KirimPesan(isiPesan, result.no_hp);
