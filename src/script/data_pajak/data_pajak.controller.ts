@@ -17,13 +17,13 @@ export default class DataTransaksiController {
     }
   }
 
-  public async GetDataByIdToko(req: Request, res: Response) {
+  public async GetDataByIdUserToko(req: Request, res: Response) {
     try {
-      const id_toko = req.body.id_toko;
+      const id_user = req.body.id_user;
 
       const result = await dataHistoryPajak.findMany({
         where: {
-          data_detail_transaksi: { data_toko: { id: id_toko } },
+          data_detail_transaksi: { data_toko: { id_user: id_user } },
         },
         orderBy: { createdAt: 'desc' },
         include: { data_detail_transaksi: { include: { data_transaksi: true } } },

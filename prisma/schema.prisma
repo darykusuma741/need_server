@@ -140,7 +140,7 @@ enum KeteranganPajak {
 }
 
 enum MetodePembayaranPajak {
-  TRANSDER // Menambahkan status "TRANSDER"
+  TRANSFER // Menambahkan status "TRANSDER"
   TUNAI // Menambahkan status "TUNAI"
 }
 
