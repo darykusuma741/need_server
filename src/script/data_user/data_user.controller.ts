@@ -107,7 +107,7 @@ async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO'
   try {
     const nama = req.body.nama;
     const no_hp = req.body.no_hp;
-    const id_ref = role == 'CUSTOMER' ? req.body.id_ref ?? null : null;
+    const id_ref = req.body.id_ref;
     const otp = GenRandomOTP();
 
     const id = await cariIDKosong();
