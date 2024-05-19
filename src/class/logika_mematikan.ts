@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { $Enums, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const dataUser = prisma.dataUser;
 
 interface CountChild {
   ns_first: number;
@@ -11,23 +12,23 @@ interface CountChild {
 }
 
 export async function LogikaMematikan() {
-  const result = await prisma.dataUser.findMany({ where: { status: { not: null } } });
+  const result = await dataUser.findMany({ where: { status: { not: null } } });
 
   for (const user of result) {
     const count = await printTree(user.id);
-    await prisma.dataUser.update({ where: { id: user.id }, data: { status: count.status } });
+    await dataUser.update({ where: { id: user.id }, data: { status: count.status } });
   }
 }
 
 async function printTree(userId: string): Promise<CountChild> {
-  const children = await prisma.dataUser.findMany({ where: { status: { not: null }, id_ref: userId }, include: { children: true } });
+  const children = await dataUser.findMany({ where: { status: { not: null }, id_ref: userId }, include: { children: true } });
 
   let ns_first = 0;
   let ns_all = 0;
   let nem_first = 0;
   let nem_all = 0;
 
-  let status: 'NS' | 'NEM' | 'NET' = 'NS';
+  let status: $Enums.StatusUser = 'NS';
   for (const child of children) {
     const count = await printTree(child.id);
     if (count.status === 'NS') {
