@@ -70,8 +70,8 @@ export default class DataTransaksiController {
       const data_user = resultAfter.data_user;
       const statusMember = await UpdateStatusMember(resultAfter.data_user, status_after, id);
       await BuatPajak(status_before, status_after, resultAfter.DataDetailTransaksi, data_user, statusMember);
-      // await BuatPesanTransaksi(status_after, data_user, id);
-      // res.json({ data: resultAfter, status: 'Success' });
+      await BuatPesanTransaksi(status_after, data_user, id);
+      res.json({ data: resultAfter, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
