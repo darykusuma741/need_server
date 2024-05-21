@@ -20,7 +20,19 @@ export default class DataTokoController {
   public async GetByIdUser(req: Request, res: Response) {
     try {
       const id_user = req.body.id_user;
-      const result = await dataToko.findMany({ where: { id_user: id_user }, orderBy: { createdAt: 'desc' } });
+      const result = await dataToko.findMany({ where: { id_user: id_user }, orderBy: { createdAt: 'desc' }, include: { DataProduk: true } });
+
+      res.json({ data: result, status: 'Success' });
+    } catch (error) {
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
+    }
+  }
+
+  public async GetByIdToko(req: Request, res: Response) {
+    try {
+      const id_toko = req.body.id_toko;
+      const result = await dataToko.findFirst({ where: { id: id_toko }, include: { DataProduk: { orderBy: { createdAt: 'desc' } } } });
+
       res.json({ data: result, status: 'Success' });
     } catch (error) {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });

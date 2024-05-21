@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { $Enums, DataUser, PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import { GenRandomID, GenRandomOTP } from '../../class/random_string';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -101,6 +101,60 @@ export default class DataUserController {
       res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
     }
   }
+
+  // PROSES GET DATA AFFILIATE
+  public async GetDataAffiliate(req: Request, res: Response) {
+    try {
+      const id_user = req.body.id_user;
+      const first = await getDataFirst(id_user, { status: undefined });
+      const percabangan = await getPercabangan(id_user, { status: undefined });
+
+      res.json({
+        data: {
+          first: first,
+          percabangan: percabangan,
+        },
+        status: 'Success',
+      });
+    } catch (error) {
+      res.status(500).json({ message: `${ErrorH(error)}`, status: 'Error' });
+    }
+  }
+}
+
+async function getDataFirst(id_user: string, aa: { status: $Enums.StatusUser | undefined }) {
+  return await dataUser.findMany({ where: { id_ref: id_user, ...aa }, include: { DataToko: true }, orderBy: { createdAt: 'desc' } });
+}
+
+async function getPercabangan(id_user: string, aa: { status: $Enums.StatusUser | undefined }) {
+  var dtR: any[] = [];
+  const rslt = await dataUser.findMany({ where: { id_ref: id_user, ...aa }, include: { DataToko: true }, orderBy: { updatedAt: 'desc' } });
+  for (const dt of rslt) {
+    const ab = await percabangan(dt.id, aa);
+    if (ab.length > 0) dtR.push(...ab);
+  }
+
+  return dtR;
+}
+
+async function percabangan(id_user_ref: string, aa: { status: $Enums.StatusUser | undefined }) {
+  let resultData: any[] = [];
+
+  // Mendapatkan data pengguna dari basis data
+  const users = await dataUser.findMany({
+    where: { id_ref: id_user_ref, ...aa },
+    include: { DataToko: true },
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  // Iterasi melalui setiap pengguna yang ditemukan
+  for (const user of users) {
+    // Memanggil fungsi percabangan secara rekursif
+    const nestedResults = await percabangan(user.id, aa);
+    resultData.push(user, ...nestedResults); // Menambahkan hasil rekursi ke array resultData
+  }
+
+  return resultData;
 }
 
 async function CreateData(req: Request, res: Response, role: 'CUSTOMER' | 'TOKO') {

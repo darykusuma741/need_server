@@ -68,19 +68,12 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, id_detai
   var repeat: boolean = rsltTransaksi.length > 1;
 
   if (repeat) {
-    ns1 = 0;
+    ns1 = 10;
     nem1 = 17;
     nem2 = 0;
     net1 = 7;
     net2 = 3;
   } else {
-    if (aas.ns1 != null) {
-      dtsv.total_pajak = (total_transaksi * ns1) / 100;
-      dtsv.id_user_affiliate = aas.ns1;
-      await BuatPesanPemasukanAffiliate(id_user, dtsv);
-
-      dataSave.push(dtsv);
-    }
     if (aas.nem2 != null) {
       dtsv.total_pajak = (total_transaksi * nem2) / 100;
       dtsv.id_user_affiliate = aas.nem2;
@@ -88,6 +81,14 @@ async function BuatPajakAffiliate(id_user_aff: string, id_user: string, id_detai
 
       dataSave.push(dtsv);
     }
+  }
+
+  if (aas.ns1 != null) {
+    dtsv.total_pajak = (total_transaksi * ns1) / 100;
+    dtsv.id_user_affiliate = aas.ns1;
+    await BuatPesanPemasukanAffiliate(id_user, dtsv);
+
+    dataSave.push(dtsv);
   }
 
   if (aas.nem1 != null) {
