@@ -14,7 +14,7 @@ services:
     stdin_open: true
     environment:
       - PORT=8802
-      - DATABASE_URL="postgresql://postgres:61278744@194.238.22.210:5432/need_server?schema=public"
+      # - DATABASE_URL="postgresql://postgres:61278744@194.238.22.210:5432/need_server?schema=public"
     # env_file:
     #   - ./config/environment.env
     command: npm start
