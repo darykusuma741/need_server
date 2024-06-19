@@ -15,9 +15,9 @@ const server = !process.env.PORT
   ? http.createServer(app)
   : https.createServer(
       {
-        key: fs.readFileSync('ssl/privkey.pem', 'utf-8'),
-        cert: fs.readFileSync('ssl/cert.pem', 'utf-8'),
-        ca: fs.readFileSync('ssl/fullchain.pem', 'utf-8'),
+        cert: fs.readFileSync('ssl/cert.crt', 'utf-8'),
+        key: fs.readFileSync('ssl/privkey.key', 'utf-8'),
+        // ca: fs.readFileSync('ssl/fullchain.pem', 'utf-8'),
       },
       app
     );
